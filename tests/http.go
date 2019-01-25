@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tests // import "github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/tests"
+package tests // import "github.com/GoogleCloudPlatform/marketplace-testrunner/tests"
 
 import (
 	"fmt"
@@ -20,8 +20,8 @@ import (
 
 	"io/ioutil"
 
-	"github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/asserts"
-	"github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/specs"
+	"github.com/GoogleCloudPlatform/marketplace-testrunner/asserts"
+	"github.com/GoogleCloudPlatform/marketplace-testrunner/specs"
 )
 
 // RunHttpTest executes an HttpTest rule, returning an empty string if

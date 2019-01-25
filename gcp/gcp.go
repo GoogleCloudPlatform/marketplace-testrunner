@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package gcp // import "github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/gcp"
+package gcp // import "github.com/GoogleCloudPlatform/marketplace-testrunner/gcp"
 import (
 	"net/http"
 
@@ -23,8 +23,8 @@ import (
 
 	"errors"
 
-	"github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/asserts"
-	"github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/specs"
+	"github.com/GoogleCloudPlatform/marketplace-testrunner/asserts"
+	"github.com/GoogleCloudPlatform/marketplace-testrunner/specs"
 	"github.com/golang/glog"
 )
 

@@ -18,7 +18,7 @@ import (
 	"reflect"
 	"testing"
 
-	. "github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/specs"
+	. "github.com/GoogleCloudPlatform/marketplace-testrunner/specs"
 	"github.com/ghodss/yaml"
 )
 

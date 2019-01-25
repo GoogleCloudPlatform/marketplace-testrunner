@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package specs // import "github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/specs"
+package specs // import "github.com/GoogleCloudPlatform/marketplace-testrunner/specs"
 
 import (
 	"encoding/json"

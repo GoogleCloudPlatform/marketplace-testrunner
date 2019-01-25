@@ -18,8 +18,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/specs"
-	"github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/tests"
+	"github.com/GoogleCloudPlatform/marketplace-testrunner/specs"
+	"github.com/GoogleCloudPlatform/marketplace-testrunner/tests"
 	"github.com/ghodss/yaml"
 )
 

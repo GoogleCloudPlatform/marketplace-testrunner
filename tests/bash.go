@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package tests // import "github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/tests"
+package tests // import "github.com/GoogleCloudPlatform/marketplace-testrunner/tests"
 
 import (
 	"bytes"
@@ -22,8 +22,8 @@ import (
 	"os/exec"
 	"syscall"
 
-	"github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/asserts"
-	"github.com/GoogleCloudPlatform/marketplace-k8s-app-tools/testrunner/specs"
+	"github.com/GoogleCloudPlatform/marketplace-testrunner/asserts"
+	"github.com/GoogleCloudPlatform/marketplace-testrunner/specs"
 )
 
 type CommandExecutor interface {
