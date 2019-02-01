@@ -51,7 +51,7 @@ RUN cp bazel-bin/runner/testrunner /bin/testrunner
 FROM launcher.gcr.io/google/debian9
 
 COPY --from=build /bin/testrunner /bin/testrunner
-COPY --from=build /usr/share /user/share
+COPY --from=build /usr/share /usr/share
 COPY --from=build /usr/local/src /usr/local/src
 
 ENTRYPOINT ["/bin/testrunner"]
