@@ -11,6 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+timeout: 300s
+options:
+  machineType: 'N1_HIGHCPU_8'
 
 steps:
 
@@ -27,10 +30,8 @@ steps:
   args:
   - 'build'
   - '--tag=gcr.io/$PROJECT_ID/testrunner:sha_$COMMIT_SHA'
-  - '--tag=gcr.io/$PROJECT_ID/testrunner:sha_$SHORT_SHA'
   - '.'
 
 # Push the image.
 images:
   - 'gcr.io/$PROJECT_ID/testrunner:$COMMIT_SHA'
-  - 'gcr.io/$PROJECT_ID/testrunner:$SHORT_SHA'
