@@ -14,26 +14,22 @@
 
 FROM launcher.gcr.io/google/debian9 AS build
 
-COPY . /usr/local/src/testrunner
-
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget pkg-config zip g++ zlib1g-dev unzip python \
+    && apt-get install -y --no-install-recommends wget pkg-config zip g++ zlib1g-dev unzip python git patch \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -q -0 /bazel-installer.sh https://github.com/bazelbuild/bazel/releases/download/0.22.0/bazel-0.22.0-installer-linux-x86_64.sh \
+# Install bazel
+
+RUN wget -q -O /bazel-installer.sh https://github.com/bazelbuild/bazel/releases/download/0.22.0/bazel-0.22.0-installer-linux-x86_64.sh \
     && chmod +x /bazel-installer.sh
 RUN /bazel-installer.sh
 
+# Copy source code and build
+
+COPY . /usr/local/src/testrunner
 WORKDIR /usr/local/src/testrunner
-RUN bazel build //runner:main
-RUN cp bazel-bin/runner/testrunner /bin/testrunner
 
-####################
-
-FROM launcher.gcr.io/google/debian9
-
-COPY --from build /bin/testrunner /bin/testrunner
-COPY oss.sha512.checksums /oss.sha512.checksums
+# Validate OSS checksums
 
 RUN set -xeu && \
     mkdir -p /usr/share/testrunner && \
@@ -46,5 +42,16 @@ RUN set -xeu && \
     mkdir -p /usr/local/src/xmlpath && \
     wget -q -O /usr/local/src/xmlpath/xmlpath.v2.zip https://github.com/go-xmlpath/xmlpath/archive/v2.zip && \
     sha512sum -c oss.sha512.checksums --status
+
+RUN bazel build //runner:main
+RUN cp bazel-bin/runner/testrunner /bin/testrunner
+
+####################
+
+FROM launcher.gcr.io/google/debian9
+
+COPY --from=build /bin/testrunner /bin/testrunner
+COPY --from=build /usr/share /user/share
+COPY --from=build /usr/local/src /usr/local/src
 
 ENTRYPOINT ["/bin/testrunner"]
