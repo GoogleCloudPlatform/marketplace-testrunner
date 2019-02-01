@@ -34,4 +34,4 @@ steps:
 
 # Push the image.
 images:
-  - 'gcr.io/$PROJECT_ID/testrunner:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/testrunner:sha_$COMMIT_SHA'
