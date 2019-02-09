@@ -31,7 +31,22 @@ func (e *SimpleSetupExecutor) ExecScript(script string) (int, string, string, er
 
 func TestSimpleSetup(t *testing.T) {
 	shouldPass(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Script: "# this script is not executed",
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(0),
+			},
+			Stdout: &specs.StringAssert{
+				Exactly: newString("FOO"),
+			},
+			Stderr: &specs.StringAssert{
+				Exactly: newString("BAR"),
+			},
+		},
+	}, &SimpleSetupExecutor{})
+
+	shouldPass(t, &specs.BashTest{
+		Scripts: []string{"# 1st script is not executed"},
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(0),
@@ -54,7 +69,22 @@ func (e *FailingExecutor) ExecScript(script string) (int, string, string, error)
 
 func TestFailingExecutor(t *testing.T) {
 	shouldFail(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Script: "# this script is not executed",
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(0),
+			},
+			Stdout: &specs.StringAssert{
+				Exactly: newString("FOO"),
+			},
+			Stderr: &specs.StringAssert{
+				Exactly: newString("BAR"),
+			},
+		},
+	}, &FailingExecutor{})
+
+	shouldFail(t, &specs.BashTest{
+		Scripts: []string{"# 1st script is not executed"},
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(0),
@@ -69,6 +99,60 @@ func TestFailingExecutor(t *testing.T) {
 	}, &FailingExecutor{})
 }
 
+type ScriptsRequired struct{}
+
+func (e *ScriptsRequired) ExecScript(script string) (int, string, string, error) {
+	return 0, "FOO", "BAR", nil
+}
+
+func TestScriptsRequired(t *testing.T) {
+	shouldPass(t, &specs.BashTest{
+		Script: "# this script is not executed",
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(0),
+			},
+		},
+	}, &ScriptsRequired{})
+
+	shouldPass(t, &specs.BashTest{
+		Scripts: []string{
+			"# 1st script is not executed",
+			"# 2nd script is not executed",
+			"# 3rd script is not executed",
+		},
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(0),
+			},
+		},
+	}, &ScriptsRequired{})
+
+	// Script(s) field is required
+	shouldFail(t, &specs.BashTest{
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(0),
+			},
+		},
+	}, &ScriptsRequired{})
+
+	// Cannot use both script and scripts fields at the same time.
+	shouldFail(t, &specs.BashTest{
+		Script: "# this script is not executed",
+		Scripts: []string{
+			"# 1st script is not executed",
+			"# 2nd script is not executed",
+			"# 3rd script is not executed",
+		},
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(0),
+			},
+		},
+	}, &ScriptsRequired{})
+}
+
 type ExitCodeExecutor struct{}
 
 func (e *ExitCodeExecutor) ExecScript(script string) (int, string, string, error) {
@@ -77,7 +161,7 @@ func (e *ExitCodeExecutor) ExecScript(script string) (int, string, string, error
 
 func TestExitCodeParsing(t *testing.T) {
 	shouldPass(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Script: "# this script is not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(42),
@@ -86,7 +170,33 @@ func TestExitCodeParsing(t *testing.T) {
 	}, &ExitCodeExecutor{})
 
 	shouldPass(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Scripts: []string{"# 1st script is not executed"},
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(42),
+			},
+		},
+	}, &ExitCodeExecutor{})
+
+	shouldPass(t, &specs.BashTest{
+		Script: "# this script is not executed",
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals:      newInt(42),
+				NotEquals:   newInt(41),
+				GreaterThan: newInt(41),
+			},
+			Stdout: &specs.StringAssert{
+				Exactly: newString(""),
+			},
+			Stderr: &specs.StringAssert{
+				Exactly: newString(""),
+			},
+		},
+	}, &ExitCodeExecutor{})
+
+	shouldPass(t, &specs.BashTest{
+		Scripts: []string{"# 1st script is not executed"},
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals:      newInt(42),
@@ -103,7 +213,7 @@ func TestExitCodeParsing(t *testing.T) {
 	}, &ExitCodeExecutor{})
 
 	shouldFail(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Script: "# this script is not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(0),
@@ -112,7 +222,25 @@ func TestExitCodeParsing(t *testing.T) {
 	}, &ExitCodeExecutor{})
 
 	shouldFail(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Scripts: []string{"# 1st script is not executed"},
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(0),
+			},
+		},
+	}, &ExitCodeExecutor{})
+
+	shouldFail(t, &specs.BashTest{
+		Script: "# this script is not executed",
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				LessThan: newInt(40),
+			},
+		},
+	}, &ExitCodeExecutor{})
+
+	shouldFail(t, &specs.BashTest{
+		Scripts: []string{"# 1st script is not executed"},
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				LessThan: newInt(40),
@@ -129,7 +257,7 @@ func (e *StdoutExecutor) ExecScript(script string) (int, string, string, error) 
 
 func TestStdoutParsing(t *testing.T) {
 	shouldPass(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Script: "# this script is not executed",
 		Expect: &specs.CliExpect{
 			Stdout: &specs.StringAssert{
 				Exactly: newString("Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nProin nibh augue, suscipit a, scelerisque sed, lacinia in, mi."),
@@ -138,7 +266,32 @@ func TestStdoutParsing(t *testing.T) {
 	}, &StdoutExecutor{})
 
 	shouldPass(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Scripts: []string{"# 1st script is not executed"},
+		Expect: &specs.CliExpect{
+			Stdout: &specs.StringAssert{
+				Exactly: newString("Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nProin nibh augue, suscipit a, scelerisque sed, lacinia in, mi."),
+			},
+		},
+	}, &StdoutExecutor{})
+
+	shouldPass(t, &specs.BashTest{
+		Script: "# this script is not executed",
+		Expect: &specs.CliExpect{
+			ExitCode: &specs.IntAssert{
+				Equals: newInt(0),
+			},
+			Stdout: &specs.StringAssert{
+				Exactly:  newString("Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nProin nibh augue, suscipit a, scelerisque sed, lacinia in, mi."),
+				Contains: newString("consectetur a"),
+			},
+			Stderr: &specs.StringAssert{
+				Exactly: newString(""),
+			},
+		},
+	}, &StdoutExecutor{})
+
+	shouldPass(t, &specs.BashTest{
+		Scripts: []string{"# 1st script is not executed"},
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(0),
@@ -154,7 +307,7 @@ func TestStdoutParsing(t *testing.T) {
 	}, &StdoutExecutor{})
 
 	shouldFail(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Script: "# this script is not executed",
 		Expect: &specs.CliExpect{
 			Stdout: &specs.StringAssert{
 				Exactly:  newString("Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi."),
@@ -164,7 +317,26 @@ func TestStdoutParsing(t *testing.T) {
 	}, &StdoutExecutor{})
 
 	shouldFail(t, &specs.BashTest{
-		Script: "# this will be not executed",
+		Scripts: []string{"# 1st script is not executed"},
+		Expect: &specs.CliExpect{
+			Stdout: &specs.StringAssert{
+				Exactly:  newString("Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi."),
+				Contains: newString("consecteturadipiscingadipiscing"),
+			},
+		},
+	}, &StdoutExecutor{})
+
+	shouldFail(t, &specs.BashTest{
+		Script: "# this script is not executed",
+		Expect: &specs.CliExpect{
+			Stdout: &specs.StringAssert{
+				NotContains: newString("Lorem"),
+			},
+		},
+	}, &StdoutExecutor{})
+
+	shouldFail(t, &specs.BashTest{
+		Scripts: []string{"# 1st script is not executed"},
 		Expect: &specs.CliExpect{
 			Stdout: &specs.StringAssert{
 				NotContains: newString("Lorem"),
