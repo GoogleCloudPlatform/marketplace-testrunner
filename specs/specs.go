@@ -15,10 +15,12 @@
 package specs // import "github.com/GoogleCloudPlatform/marketplace-testrunner/specs"
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
 	"strings"
+	"text/template"
 
 	"github.com/ghodss/yaml"
 )
@@ -98,14 +100,21 @@ type StringAssert struct {
 	NotContains *string `json:"notContains,omitempty"`
 }
 
-func LoadSuite(path string) *Suite {
-	data, err := ioutil.ReadFile(path)
+type TemplateSpec struct {
+	Vars map[string]string
+}
+
+func LoadSuite(path string, vars *map[string]string) *Suite {
+	templateFile, err := ioutil.ReadFile(path)
 	check(err)
 
+	templateString := string(templateFile)
+	templateData := renderTestSpecTemplate(templateString, TemplateSpec{*vars})
+
 	if strings.HasSuffix(path, ".json") {
-		return loadJsonSuite(data)
+		return loadJsonSuite(templateData.Bytes())
 	} else if strings.HasSuffix(path, ".yaml") || strings.HasSuffix(path, ".yml") {
-		return loadYamlSuite(data)
+		return loadYamlSuite(templateData.Bytes())
 	}
 	log.Fatalf("Unrecognized test suite file type: %v", path)
 	return &Suite{}
@@ -123,6 +132,15 @@ func loadYamlSuite(data []byte) *Suite {
 	err := yaml.Unmarshal(data, &suite)
 	check(err)
 	return &suite
+}
+
+func renderTestSpecTemplate(templateString string, data TemplateSpec) bytes.Buffer {
+	tmpl, err := template.New("testSpecTemplate").Parse(templateString)
+	check(err)
+	var result bytes.Buffer
+	err = tmpl.Execute(&result, data)
+	check(err)
+	return result
 }
 
 func check(err interface{}) {
