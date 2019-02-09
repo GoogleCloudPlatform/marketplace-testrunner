@@ -15,14 +15,16 @@
 actions:
 - name: Success CLI command
   bashTest:
-    script: |-
-      true
+    script: true
+    expect:
+      exitCode:
+        equals: 1
 - name: Failure CLI command
   bashTest:
-    script: |-
-      false
+    script: false
     expect:
-      statusCode:
+      exitCode:
+        equals: 1
         notEquals: 0
 - name: Contains text in output
   bashTest:
@@ -30,7 +32,7 @@ actions:
       set -eu
       echo "some text to test"
     expect:
-      statusCode:
+      exitCode:
         equals: 0
       stdout:
         contains: 'some text'
@@ -51,3 +53,13 @@ actions:
     expect:
       stderr:
         matches: 't.xt'
+- name: Multiple scripts per action
+  bashTest:
+    scripts:
+    - echo foo
+    - echo foo
+    expect:
+      exitCode:
+        equals: 0
+      stdout:
+        equals: 'foo'

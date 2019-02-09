@@ -25,12 +25,13 @@ import (
 
 type SimpleSetupExecutor struct{}
 
-func (e *SimpleSetupExecutor) RunTest(test *specs.BashTest) (int, string, string, error) {
+func (e *SimpleSetupExecutor) ExecScript(script string) (int, string, string, error) {
 	return 0, "FOO", "BAR", nil
 }
 
 func TestSimpleSetup(t *testing.T) {
 	shouldPass(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(0),
@@ -47,12 +48,13 @@ func TestSimpleSetup(t *testing.T) {
 
 type FailingExecutor struct{}
 
-func (e *FailingExecutor) RunTest(test *specs.BashTest) (int, string, string, error) {
+func (e *FailingExecutor) ExecScript(script string) (int, string, string, error) {
 	return 0, "FOO", "BAR", errors.New("Error while executing external process")
 }
 
 func TestFailingExecutor(t *testing.T) {
 	shouldFail(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(0),
@@ -69,12 +71,13 @@ func TestFailingExecutor(t *testing.T) {
 
 type ExitCodeExecutor struct{}
 
-func (e *ExitCodeExecutor) RunTest(test *specs.BashTest) (int, string, string, error) {
+func (e *ExitCodeExecutor) ExecScript(script string) (int, string, string, error) {
 	return 42, "", "", nil
 }
 
 func TestExitCodeParsing(t *testing.T) {
 	shouldPass(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(42),
@@ -83,6 +86,7 @@ func TestExitCodeParsing(t *testing.T) {
 	}, &ExitCodeExecutor{})
 
 	shouldPass(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals:      newInt(42),
@@ -99,6 +103,7 @@ func TestExitCodeParsing(t *testing.T) {
 	}, &ExitCodeExecutor{})
 
 	shouldFail(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(0),
@@ -107,6 +112,7 @@ func TestExitCodeParsing(t *testing.T) {
 	}, &ExitCodeExecutor{})
 
 	shouldFail(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				LessThan: newInt(40),
@@ -117,12 +123,13 @@ func TestExitCodeParsing(t *testing.T) {
 
 type StdoutExecutor struct{}
 
-func (e *StdoutExecutor) RunTest(test *specs.BashTest) (int, string, string, error) {
+func (e *StdoutExecutor) ExecScript(script string) (int, string, string, error) {
 	return 0, "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nProin nibh augue, suscipit a, scelerisque sed, lacinia in, mi.", "", nil
 }
 
 func TestStdoutParsing(t *testing.T) {
 	shouldPass(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			Stdout: &specs.StringAssert{
 				Exactly: newString("Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nProin nibh augue, suscipit a, scelerisque sed, lacinia in, mi."),
@@ -131,6 +138,7 @@ func TestStdoutParsing(t *testing.T) {
 	}, &StdoutExecutor{})
 
 	shouldPass(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			ExitCode: &specs.IntAssert{
 				Equals: newInt(0),
@@ -146,6 +154,7 @@ func TestStdoutParsing(t *testing.T) {
 	}, &StdoutExecutor{})
 
 	shouldFail(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			Stdout: &specs.StringAssert{
 				Exactly:  newString("Proin nibh augue, suscipit a, scelerisque sed, lacinia in, mi."),
@@ -155,6 +164,7 @@ func TestStdoutParsing(t *testing.T) {
 	}, &StdoutExecutor{})
 
 	shouldFail(t, &specs.BashTest{
+		Script: "# this will be not executed",
 		Expect: &specs.CliExpect{
 			Stdout: &specs.StringAssert{
 				NotContains: newString("Lorem"),

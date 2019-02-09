@@ -27,13 +27,13 @@ import (
 )
 
 type CommandExecutor interface {
-	RunTest(test *specs.BashTest) (int, string, string, error)
+	ExecScript(script string) (int, string, string, error)
 }
 
 type RealExecutor struct{}
 
-func (e *RealExecutor) RunTest(test *specs.BashTest) (int, string, string, error) {
-	cmd := exec.Command("bash", "-c", test.Script)
+func (e *RealExecutor) ExecScript(script string) (int, string, string, error) {
+	cmd := exec.Command("bash", "-c", script)
 	err, stdout, stderr := e.executeProcess(cmd)
 	var exitErr *exec.ExitError
 	if err != nil {
@@ -71,14 +71,40 @@ func (e *RealExecutor) transformExitErrorToCode(exitErr *exec.ExitError) (int, e
 	return 0, errors.New("Cannot extract status code from process")
 }
 
-// RunBashTest executes a BashTest rule, returning an empty string if
-// the test passes, otherwise the error message.
-func RunBashTest(test *specs.BashTest, executor CommandExecutor) string {
-	status, stdout, stderr, err := executor.RunTest(test)
+func runTest(test *specs.BashTest, script string, executor CommandExecutor) string {
+	status, stdout, stderr, err := executor.ExecScript(script)
 	if err != nil {
 		return asserts.MessageWithContext(fmt.Sprintf("%v", err), "Failed to execute bash script")
 	}
 	return validateResult(status, stdout, stderr, test)
+}
+
+func runMultipleScripts(test *specs.BashTest, executor CommandExecutor) string {
+	var msg string
+	for i, script := range test.Scripts {
+		result := runTest(test, script, executor)
+		if len(result) > 0 {
+			msg += fmt.Sprintf("%d: %s\n", i, result)
+		}
+	}
+	if len(msg) > 0 {
+		return fmt.Sprintf("Result of executed multiple scripts:\n%s", msg)
+	}
+	return ""
+}
+
+// RunBashTest executes a bashTest rule(s), returning an empty string if
+// the test passes, otherwise the error message.
+func RunBashTest(test *specs.BashTest, executor CommandExecutor) string {
+	if len(test.Script) > 0 && len(test.Scripts) > 0 {
+		return asserts.MessageWithContext("Syntax error", "Cannot use both script and scripts fields at the same time")
+	} else if len(test.Script) > 0 {
+		return runTest(test, test.Script, executor)
+	} else if len(test.Scripts) > 0 {
+		return runMultipleScripts(test, executor)
+	} else {
+		return asserts.MessageWithContext("Syntax error", "Script(s) field is required")
+	}
 }
 
 func validateResult(status int, stdout, stderr string, test *specs.BashTest) string {
