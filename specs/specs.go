@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"text/template"
 
@@ -102,14 +103,25 @@ type StringAssert struct {
 
 type TemplateSpec struct {
 	Vars map[string]string
+	Env  map[string]string
+}
+
+func getEnvs() map[string]string {
+	envs := make(map[string]string)
+	for _, element := range os.Environ() {
+		splits := strings.Split(element, "=")
+		envs[splits[0]] = splits[1]
+	}
+	return envs
 }
 
 func LoadSuite(path string, vars *map[string]string) *Suite {
 	templateFile, err := ioutil.ReadFile(path)
 	check(err)
 
+	env := getEnvs()
 	templateString := string(templateFile)
-	templateData := renderTestSpecTemplate(templateString, TemplateSpec{*vars})
+	templateData := renderTestSpecTemplate(templateString, TemplateSpec{*vars, env})
 
 	if strings.HasSuffix(path, ".json") {
 		return loadJsonSuite(templateData.Bytes())

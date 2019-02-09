@@ -15,12 +15,10 @@
 actions:
 - name: Success CLI command
   bashTest:
-    script: |-
-      true
+    script: true
 - name: Failure CLI command
   bashTest:
-    script: |-
-      false
+    script: false
     expect:
       statusCode:
         notEquals: 0
@@ -51,3 +49,12 @@ actions:
     expect:
       stderr:
         matches: 't.xt'
+
+# You can use Go template syntax and env variables inside the test suite.
+# Also by '--vars' params, you can provide custom variables in the runtime.
+- name: Use Go template, I'm {{ .Env.USER }}
+  bashTest:
+    script: echo {{ .Env.USER }}
+    expect:
+      stdout:
+        notEquals: iHaveVeryUniqueUserName
