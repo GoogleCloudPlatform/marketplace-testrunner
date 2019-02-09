@@ -22,14 +22,18 @@ import (
 	"github.com/ghodss/yaml"
 )
 
+var vars = map[string]string{
+	"MainVmIp": "127.0.0.1",
+}
+
 func TestYamlSuite(t *testing.T) {
-	actual := LoadSuite("testdata/suite.yaml")
+	actual := LoadSuite("testdata/suite.yaml", &vars)
 	expected := expectedSuite()
 	assertSuitesEqual(t, actual, expected)
 }
 
 func TestJsonSuite(t *testing.T) {
-	actual := LoadSuite("testdata/suite.json")
+	actual := LoadSuite("testdata/suite.json", &vars)
 	expected := expectedSuite()
 	assertSuitesEqual(t, actual, expected)
 }
@@ -49,7 +53,7 @@ func expectedSuite() *Suite {
 			{
 				Name: "Can load home page",
 				HttpTest: &HttpTest{
-					Url: "http://{{.Vars.MainVmIp}}:9012",
+					Url: "http://127.0.0.1:9012",
 					Expect: HttpExpect{
 						StatusCode: &IntAssert{
 							Equals: newInt(200),
