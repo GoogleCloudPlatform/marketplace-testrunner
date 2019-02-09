@@ -53,6 +53,10 @@ actions:
     expect:
       stderr:
         matches: 't.xt'
+# Multiple scripts may be used in case your test case required to be executed more than a command.
+# For example, testing database operations can test creating and updating db,
+# however updating is not possible before db is created. By using multiple scripts you can create,
+# update, read and delete db in one action. The expect field is shared.
 - name: Multiple scripts per action
   bashTest:
     scripts:
