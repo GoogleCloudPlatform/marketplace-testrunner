@@ -64,7 +64,7 @@ func (t testStatus) FailuresSoFarCount() int {
 
 func main() {
 	testSpecs := flags.FlagStringList("test_spec", "path to a yaml or json file containing the test spec. Can be specified multiple times")
-	vars := flags.FlagStringMap("vars", "variable substitutions. Can be specified multiple times. Value should be key=value")
+	vars := flags.FlagStringMap("vars", "variable substitutions. Value should be key=value. Can be specified multiple times")
 	flag.Parse()
 
 	if len(*testSpecs) <= 0 {
