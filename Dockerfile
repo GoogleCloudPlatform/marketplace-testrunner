@@ -33,7 +33,7 @@ WORKDIR /usr/local/src/testrunner
 
 RUN set -xeu && \
     mkdir -p /usr/share/testrunner && \
-    wget -q -O /usr/share/testrunner/testrunner.LICENSE https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-k8s-app-tools/master/LICENSE && \
+    wget -q -O /usr/share/testrunner/testrunner.LICENSE https://raw.githubusercontent.com/GoogleCloudPlatform/marketplace-testrunner/master/LICENSE && \
     wget -q -O /usr/share/testrunner/go-yaml.LICENSE https://raw.githubusercontent.com/go-yaml/yaml/v2.2.1/LICENSE && \
     wget -q -O /usr/share/testrunner/go-yaml.LICENSE.libyaml https://raw.githubusercontent.com/go-yaml/yaml/v2.2.1/LICENSE.libyaml && \
     wget -q -O /usr/share/testrunner/go-xmlpath.LICENSE https://raw.githubusercontent.com/go-xmlpath/xmlpath/v2/LICENSE && \
