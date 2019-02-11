@@ -17,15 +17,15 @@ options:
 
 steps:
 
-# Build all
+# Build all to make sure everything still compiles.
 - name: gcr.io/cloud-builders/bazel
   args: ['build', '//...']
 
-# Run tests
+# Run tests.
 - name: gcr.io/cloud-builders/bazel
   args: ['test', '//...']
 
-# Build an image
+# Build image.
 - name: gcr.io/cloud-builders/docker
   args:
   - 'build'
