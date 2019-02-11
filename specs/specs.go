@@ -51,8 +51,9 @@ type GcpAction struct {
 }
 
 type BashTest struct {
-	Script string     `json:"script"`
-	Expect *CliExpect `json:"expect"`
+	Script  string     `json:"script"`
+	Scripts []string   `json:"scripts"`
+	Expect  *CliExpect `json:"expect"`
 }
 
 type HttpExpect struct {
