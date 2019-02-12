@@ -11,36 +11,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+timeout: 300s
+options:
+  machineType: 'N1_HIGHCPU_8'
 
 steps:
 
-# Run tests
+# Build all to make sure everything still compiles.
+- name: gcr.io/cloud-builders/bazel
+  args: ['build', '//...']
+
+# Run tests.
 - name: gcr.io/cloud-builders/bazel
   args: ['test', '//...']
 
-# Build binary
-- name: gcr.io/cloud-builders/bazel
-  args: ['build', '//runner:main']
-
-# Create tmp directory to keep binary
-- name: gcr.io/google-appengine/debian9
-  args: ['mkdir', '-p', 'tmp']
-
-# Copy binary from symlinked directory and rename it
-- name: gcr.io/google-appengine/debian9
-  args: ['cp', 'bazel-bin/runner/testrunner', 'tmp/testrunner']
-
-# Copy Dockerfile and checksums
-- name: gcr.io/google-appengine/debian9
-  args: ['cp', 'docker/Dockerfile', 'docker/oss.sha512.checksums','tmp']
-
-# Build an image
+# Build image.
 - name: gcr.io/cloud-builders/docker
   args:
   - 'build'
-  - '--tag=gcr.io/$PROJECT_ID/testrunner:latest'
-  - 'tmp'
+  - '--tag=gcr.io/$PROJECT_ID/testrunner:sha_$COMMIT_SHA'
+  - '.'
 
 # Push the image.
 images:
-  - 'gcr.io/$PROJECT_ID/testrunner:latest'
+- 'gcr.io/$PROJECT_ID/testrunner:sha_$COMMIT_SHA'

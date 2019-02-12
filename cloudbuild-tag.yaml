@@ -1,0 +1,15 @@
+steps:
+
+- name: gcr.io/cloud-builders/docker
+  args:
+  - pull
+  - gcr.io/$_STAGING_PROJECT_ID/testrunner:sha_$COMMIT_SHA
+
+- name: gcr.io/cloud-builders/docker
+  args:
+  - tag
+  - gcr.io/$_STAGING_PROJECT_ID/testrunner:sha_$COMMIT_SHA
+  - gcr.io/$PROJECT_ID/testrunner:$TAG_NAME
+
+images:
+- gcr.io/$PROJECT_ID/testrunner:$TAG_NAME
