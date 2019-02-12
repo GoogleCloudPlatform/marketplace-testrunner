@@ -60,7 +60,7 @@ actions:
         matches: 't.xt'
 
 # You can use Go template syntax and env variables inside the test suite.
-# Also by '--vars' params, you can provide custom variables in the runtime.
+# Also by '--var' params, you can provide custom variables in the runtime.
 - name: Use Go template, I'm {{ .Env.USER }}
   bashTest:
     script: echo {{ .Env.USER }}
