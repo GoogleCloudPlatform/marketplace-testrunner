@@ -26,14 +26,22 @@ var vars = map[string]string{
 	"MainVmIp": "127.0.0.1",
 }
 
+var envs = map[string]string{
+	"TEST_NAME": "Can load home page",
+}
+
+func getTemplateSpec() TemplateSpec {
+	return TemplateSpec{Var: vars, Env: envs}
+}
+
 func TestYamlSuite(t *testing.T) {
-	actual := LoadSuite("testdata/suite.yaml", &vars)
+	actual := LoadSuite("testdata/suite.yaml", getTemplateSpec())
 	expected := expectedSuite()
 	assertSuitesEqual(t, actual, expected)
 }
 
 func TestJsonSuite(t *testing.T) {
-	actual := LoadSuite("testdata/suite.json", &vars)
+	actual := LoadSuite("testdata/suite.json", getTemplateSpec())
 	expected := expectedSuite()
 	assertSuitesEqual(t, actual, expected)
 }

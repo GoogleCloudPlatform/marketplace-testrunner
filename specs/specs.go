@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"os"
 	"strings"
 	"text/template"
 
@@ -102,26 +101,16 @@ type StringAssert struct {
 }
 
 type TemplateSpec struct {
-	Vars map[string]string
-	Env  map[string]string
+	Var map[string]string
+	Env map[string]string
 }
 
-func getEnvs() map[string]string {
-	envs := make(map[string]string)
-	for _, element := range os.Environ() {
-		splits := strings.Split(element, "=")
-		envs[splits[0]] = splits[1]
-	}
-	return envs
-}
-
-func LoadSuite(path string, vars *map[string]string) *Suite {
+func LoadSuite(path string, templateSpec TemplateSpec) *Suite {
 	templateFile, err := ioutil.ReadFile(path)
 	check(err)
 
-	env := getEnvs()
 	templateString := string(templateFile)
-	templateData := renderTestSpecTemplate(templateString, TemplateSpec{*vars, env})
+	templateData := renderTestSpecTemplate(templateString, templateSpec)
 
 	if strings.HasSuffix(path, ".json") {
 		return loadJsonSuite(templateData.Bytes())
@@ -146,11 +135,11 @@ func loadYamlSuite(data []byte) *Suite {
 	return &suite
 }
 
-func renderTestSpecTemplate(templateString string, data TemplateSpec) bytes.Buffer {
+func renderTestSpecTemplate(templateString string, templateSpec TemplateSpec) bytes.Buffer {
 	tmpl, err := template.New("testSpecTemplate").Parse(templateString)
 	check(err)
 	var result bytes.Buffer
-	err = tmpl.Execute(&result, data)
+	err = tmpl.Execute(&result, templateSpec)
 	check(err)
 	return result
 }
