@@ -12,9 +12,8 @@ steps:
   - gcr.io/$PROJECT_ID/testrunner:$TAG_NAME
 
 - name: gcr.io/cloud-builders/gcloud
-  entrypoint: /bin/bash
+  entrypoint: /workspace/cloudbuild/tag_latest.sh
   args:
-  - ./cloudbuild/tag_latest.sh
   - gcr.io/$PROJECT_ID/testrunner
   - "$TAG_NAME"
 
