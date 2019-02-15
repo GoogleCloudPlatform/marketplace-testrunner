@@ -12,11 +12,22 @@ steps:
   - gcr.io/$PROJECT_ID/testrunner:$TAG_NAME
 
 - name: gcr.io/cloud-builders/gcloud
-  entrypoint: /workspace/cloudbuild/tag_latest.sh
+  entrypoint: /bin/bash
   args:
-  - gcr.io/$PROJECT_ID/testrunner
-  - "$TAG_NAME"
+  - -ceu
+  - echo "$(cloudbuild/should_tag_latest.sh gcr.io/$PROJECT_ID/testrunner $TAG_NAME)" > should_tag_latest
+
+- name: gcr.io/cloud-builders/docker
+  entrypoint: /bin/bash
+  args:
+  - -ceu
+  - |
+    if [[ "$(cat should_tag_latest)" == "true" ]]; then
+      docker tag gcr.io/$PROJECT_ID/testrunner:$TAG_NAME gcr.io/$PROJECT_ID/testrunner:latest
+      docker push gcr.io/$PROJECT_ID/testrunner:latest
+    else
+      echo "Not tagging latest"
+    fi
 
 images:
 - gcr.io/$PROJECT_ID/testrunner:$TAG_NAME
-- gcr.io/$PROJECT_ID/testrunner:latest
