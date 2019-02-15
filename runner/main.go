@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/marketplace-testrunner/asserts"
 	"github.com/GoogleCloudPlatform/marketplace-testrunner/conditions"
@@ -62,8 +63,18 @@ func (t testStatus) FailuresSoFarCount() int {
 	return t.FailureCount
 }
 
+func getEnvs() map[string]string {
+	envs := make(map[string]string)
+	for _, element := range os.Environ() {
+		splits := strings.SplitN(element, "=", 2)
+		envs[splits[0]] = splits[1]
+	}
+	return envs
+}
+
 func main() {
-	testSpecs := flags.FlagStringList("test_spec", "Path to a yaml or json file containing the test spec. Can be specified multiple times")
+	testSpecs := flags.FlagStringList("test_spec", "path to a yaml or json file containing the test spec. Can be specified multiple times")
+	vars := flags.FlagStringMap("var", "variable substitutions. Value should be key=value. Can be specified multiple times")
 	flag.Parse()
 
 	if len(*testSpecs) <= 0 {
@@ -73,7 +84,7 @@ func main() {
 	status := testStatus{}
 	for _, testSpec := range *testSpecs {
 		glog.Infof(">>> Running %v", testSpec)
-		suite := specs.LoadSuite(testSpec)
+		suite := specs.LoadSuite(testSpec, specs.TemplateSpec{Var: *vars, Env: getEnvs()})
 		if len(suite.Actions) <= 0 {
 			glog.Info(" > Nothing to run!")
 			continue

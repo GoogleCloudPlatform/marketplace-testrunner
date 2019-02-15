@@ -13,28 +13,34 @@
 # limitations under the License.
 
 actions:
+
 - name: Success CLI command
   bashTest:
-    script: |-
-      true
+    script: true
+    expect:
+      exitCode:
+        equals: 0
+
 - name: Failure CLI command
   bashTest:
-    script: |-
-      false
+    script: false
     expect:
-      statusCode:
+      exitCode:
+        equals: 1
         notEquals: 0
+
 - name: Contains text in output
   bashTest:
     script: |-
       set -eu
       echo "some text to test"
     expect:
-      statusCode:
+      exitCode:
         equals: 0
       stdout:
         contains: 'some text'
         notContains: 'random text'
+
 - name: Stdout contains some regexp
   bashTest:
     script: |-
@@ -43,6 +49,7 @@ actions:
     expect:
       stdout:
         matches: 't.xt'
+
 - name: Stderr contains some regexp
   bashTest:
     script: |-
@@ -51,3 +58,12 @@ actions:
     expect:
       stderr:
         matches: 't.xt'
+
+# You can use Go template syntax and env variables inside the test suite.
+# Also by '--var' params, you can provide custom variables in the runtime.
+- name: Use Go template, I'm {{ .Env.USER }}
+  bashTest:
+    script: echo {{ .Env.USER }}
+    expect:
+      stdout:
+        notEquals: iHaveVeryUniqueUserName
