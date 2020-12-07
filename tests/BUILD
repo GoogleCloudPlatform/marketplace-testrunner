@@ -30,6 +30,7 @@ go_library(
     deps = [
         "//asserts:go_default_library",
         "//specs:go_default_library",
+        "@com_github_golang_glog//:go_default_library",
     ],
 )
 
@@ -44,5 +45,6 @@ go_test(
     deps = [
         "//specs:go_default_library",
         "@com_github_ghodss_yaml//:go_default_library",
+        "@com_github_golang_glog//:go_default_library",
     ],
 )
