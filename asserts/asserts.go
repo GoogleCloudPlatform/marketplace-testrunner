@@ -33,6 +33,21 @@ func MessageWithContext(msg string, context string) string {
 	return fmt.Sprintf("%v > %v", context, msg)
 }
 
+// BashMessageWithContext creates a new message that hierarchically puts
+// the message within the provided context.
+// Provides additional info on exit status code, stdout and stderr
+// of executed bash command.
+func BashMessageWithContext(msg string, context string, status int, stdout string, stderr string) string {
+	var sb strings.Builder
+
+	fmt.Fprintf(&sb, "%v\n", MessageWithContext(msg, context))
+	fmt.Fprintf(&sb, "> EXIT CODE: %v\n", status)
+	fmt.Fprintf(&sb, ">    STDOUT: %v\n", strings.TrimSuffix(stdout, "\n"))
+	fmt.Fprintf(&sb, ">    STDERR: %v\n", strings.TrimSuffix(stderr, "\n"))
+
+	return sb.String()
+}
+
 // DoAssert asserts the value against the rule, returning
 // an empty string if the assertion succeeds, or the error message.
 func DoAssert(value interface{}, rule interface{}) string {
