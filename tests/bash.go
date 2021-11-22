@@ -86,13 +86,13 @@ func validateResult(status int, stdout, stderr string, test *specs.BashTest) str
 		return ""
 	}
 	if msg := validateErrorCode(status, test.Expect.ExitCode); msg != "" {
-		return asserts.MessageWithContext(msg, "Unexpected exit status code")
+		return asserts.BashMessageWithContext(msg, "Unexpected exit status code", status, stdout, stderr)
 	}
 	if msg := validateBufferedOutput(stdout, test.Expect.Stdout); msg != "" {
-		return asserts.MessageWithContext(msg, "Unexpected standard output stream")
+		return asserts.BashMessageWithContext(msg, "Unexpected standard output stream", status, stdout, stderr)
 	}
-	if msg := validateBufferedOutput(stdout, test.Expect.Stdout); msg != "" {
-		return asserts.MessageWithContext(msg, "Unexpected standard error stream")
+	if msg := validateBufferedOutput(stderr, test.Expect.Stderr); msg != "" {
+		return asserts.BashMessageWithContext(msg, "Unexpected standard error stream", status, stdout, stderr)
 	}
 	return ""
 }
