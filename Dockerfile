@@ -1,4 +1,4 @@
-# Copyright 2018 Google LLC. All rights reserved.
+# Copyright 2023 Google LLC. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM launcher.gcr.io/google/debian9 AS build
+FROM marketplace.gcr.io/google/debian11 AS build
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends wget pkg-config zip g++ zlib1g-dev unzip python git patch \
@@ -48,7 +48,7 @@ RUN cp bazel-bin/runner/testrunner /bin/testrunner
 
 ####################
 
-FROM launcher.gcr.io/google/debian9
+FROM marketplace.gcr.io/google/debian11
 
 COPY --from=build /bin/testrunner /bin/testrunner
 COPY --from=build /usr/share /usr/share
