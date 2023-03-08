@@ -24,7 +24,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/marketplace-testrunner/asserts"
 	"github.com/GoogleCloudPlatform/marketplace-testrunner/specs"
-	"github.com/golang/glog"
 )
 
 type CommandExecutor interface {
@@ -38,9 +37,6 @@ func (e *RealExecutor) RunTest(test *specs.BashTest) (int, string, string, error
 	err, stdout, stderr := e.executeProcess(cmd)
 	var exitErr *exec.ExitError
 	if err != nil {
-		glog.Infof(">>> stdout:", stdout)
-		glog.Errorf(">>> stderr:", stderr)
-
 		if e, ok := err.(*exec.ExitError); ok {
 			exitErr = e
 		} else {
