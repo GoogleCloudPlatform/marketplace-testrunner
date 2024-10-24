@@ -15,7 +15,7 @@
 FROM marketplace.gcr.io/google/debian11 AS build
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget pkg-config zip g++ zlib1g-dev unzip python git patch \
+    && apt-get install -y --no-install-recommends wget pkg-config zip g++ zlib1g-dev unzip python git patch ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install bazel
