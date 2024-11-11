@@ -20,7 +20,7 @@ RUN apt-get update \
 
 # Install bazel
 
-RUN wget -q -O /bazel-installer.sh https://github.com/bazelbuild/bazel/releases/download/4.2.1/bazel-4.2.1-installer-linux-x86_64.sh \
+RUN wget -q -O /bazel-installer.sh https://github.com/bazelbuild/bazel/releases/download/7.3.2/bazel-7.3.2-installer-linux-x86_64.sh \
     && chmod +x /bazel-installer.sh
 RUN /bazel-installer.sh
 
