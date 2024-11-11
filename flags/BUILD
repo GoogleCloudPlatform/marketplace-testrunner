@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-package(default_visibility = ["//visibility:public"])
-
 load(
     "@io_bazel_rules_go//go:def.bzl",
     "go_library",
 )
+
+package(default_visibility = ["//visibility:public"])
 
 go_library(
     name = "go_default_library",

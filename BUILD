@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
 licenses(["notice"])  # Apache 2.0
 
 exports_files(["LICENSE"])
-
-load("@bazel_gazelle//:def.bzl", "gazelle")
 
 # gazelle:prefix github.com/GoogleCloudPlatform/marketplace-testrunner
 gazelle(name = "gazelle")

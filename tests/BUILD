@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-package(default_visibility = ["//visibility:public"])
-
 load(
     "@io_bazel_rules_go//go:def.bzl",
     "go_library",
     "go_test",
 )
+
+package(default_visibility = ["//visibility:public"])
 
 go_library(
     name = "go_default_library",
@@ -40,8 +40,8 @@ go_test(
         "bash_test.go",
         "http_test.go",
     ],
-    embed = [":go_default_library"],
     deps = [
+        ":go_default_library",
         "//specs:go_default_library",
         "@com_github_ghodss_yaml//:go_default_library",
     ],
