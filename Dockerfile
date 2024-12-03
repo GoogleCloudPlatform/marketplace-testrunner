@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM marketplace.gcr.io/google/debian11 AS build
+FROM marketplace.gcr.io/google/debian12 AS build
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends wget pkg-config zip g++ zlib1g-dev unzip python git patch ca-certificates \
+    && apt-get install -y --no-install-recommends wget pkg-config zip g++ libminizip-dev zlib1g-dev unzip python-is-python3 git patch ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install bazel
