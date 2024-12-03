@@ -48,7 +48,7 @@ RUN cp bazel-bin/runner/testrunner /bin/testrunner
 
 ####################
 
-FROM marketplace.gcr.io/google/debian11
+FROM marketplace.gcr.io/google/debian12
 
 COPY --from=build /bin/testrunner /bin/testrunner
 COPY --from=build /usr/share /usr/share
